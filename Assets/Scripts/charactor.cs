@@ -4,35 +4,36 @@ using UnityEngine;
 
 public class charactor : MonoBehaviour
 {
-    public int health = 3;
-    public float knockbackDuration = 0.3f; // 彈開持續時間
-    private bool isKnockedBack = false;
-    private float knockbackTimer = 0f;
-
+    public AudioClip attackSound;
+    public AudioClip hurtSound;
     public GameObject swordHitbox;      // 指向劍的碰撞區 GameObject
-    public float hitboxDuration = 0.5f; // 啟用碰撞時間
-
-    private Vector2 minBounds;
-    private Vector2 maxBounds;
-
-    public float moveSpeed = 5f;
     public GameObject boundObject; // 拖曳限制用的物件進來
     public Transform foot;          // 角色腳的位置
     public BoxCollider2D attackCollider;
+    public int health = 3;
+    public float knockbackDuration = 0.3f; // 彈開持續時間
+    public float hitboxDuration = 0.5f; // 啟用碰撞時間
+    public float moveSpeed = 5f;
 
     private Animator animator;
     private Rigidbody2D rb;
     private SpriteRenderer sprite;
-
+    private AudioSource audioSource;
     private Vector2 moveInput;
     private Vector2 targetPosition;
+    private Vector2 minBounds;
+    private Vector2 maxBounds;
 
+    private float knockbackTimer = 0f;
     private float stillTimer = 0f;
     private float idleDelay = 0.1f;
+    private bool isKnockedBack = false;
     private bool isWalking = false;
+    private bool needPlayingAttackSound = false;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
@@ -107,10 +108,12 @@ public class charactor : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             animator.SetBool("isAttack", true);
+            needPlayingAttackSound = true;
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
             animator.SetBool("isAttack", false);
+            // needPlayingAttackSound = false;
         }
     }
 
@@ -173,6 +176,23 @@ public class charactor : MonoBehaviour
         knockbackTimer = knockbackDuration;
 
         animator.SetBool("isHurt", true);
+        if(hurtSound != null){
+            audioSource.PlayOneShot(hurtSound);
+        }
+    }
+
+    public void PlayAttackSound(){
+        if(attackSound != null){
+            if(needPlayingAttackSound == true){
+                audioSource.PlayOneShot(attackSound);
+            }
+        }
+    }
+
+    public void StopAttackSound(){
+        if(attackSound != null){
+            needPlayingAttackSound = false;
+        }
     }
 
     public void PauseGame()

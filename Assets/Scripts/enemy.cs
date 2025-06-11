@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class enemy : MonoBehaviour
 {
-    public int health = 5;
+    public AudioClip hurtSound;
     public Transform target; // 玩家（或任何目標）
+    public int health = 5;
     public float speed = 2f;
     public float pushForce = 15f;
+
     private SpriteRenderer spriteRenderer;
     private Animator animator;
+    private AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
     }
@@ -74,6 +78,10 @@ public class enemy : MonoBehaviour
         health--;
 
         animator.SetBool("isHurt", true);
+        if(hurtSound != null){
+            audioSource.PlayOneShot(hurtSound);
+        }
+
         StartCoroutine(ResumeHurt());
     }
 
