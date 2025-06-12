@@ -141,8 +141,6 @@ public class charactor : MonoBehaviour
             return; // 彈開期間不控制位置
         }
 
-        if(GameManager.Instance.isPaused) return;
-
         Vector2 nextPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
 
         if (foot != null)

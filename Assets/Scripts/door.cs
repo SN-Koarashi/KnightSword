@@ -18,6 +18,8 @@ public class door : MonoBehaviour
     }
 
     void OnMouseDown(){
+        if(GameManager.Instance.isPaused) return;
+
         Scene currentScene = gameObject.scene;
 
         if(currentScene.name == "boss"){
