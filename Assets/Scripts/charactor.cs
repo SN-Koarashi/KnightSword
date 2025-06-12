@@ -115,7 +115,7 @@ public class charactor : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             animator.SetBool("isAttack", false);
-            // needPlayingAttackSound = false;
+            needPlayingAttackSound = false;
         }
     }
 
@@ -193,18 +193,10 @@ public class charactor : MonoBehaviour
     }
 
     public void PlayAttackSound(){
-        if(GameManager.Instance.isPaused) return;
+        if(GameManager.Instance.isPaused || !needPlayingAttackSound) return;
 
         if(attackSound != null){
-            if(needPlayingAttackSound == true){
-                audioSource.PlayOneShot(attackSound);
-            }
-        }
-    }
-
-    public void StopAttackSound(){
-        if(attackSound != null){
-            needPlayingAttackSound = false;
+            audioSource.PlayOneShot(attackSound);
         }
     }
 

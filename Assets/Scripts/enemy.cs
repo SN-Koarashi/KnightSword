@@ -8,7 +8,7 @@ public class enemy : MonoBehaviour
     public Slider healthSlider;
     public AudioClip hurtSound;
     public Transform target; // 玩家（或任何目標）
-    public float maxHealth = 5f;
+    public float maxHealth = 150f;
     public float speed = 2f;
     public float pushForce = 15f;
 
@@ -62,6 +62,7 @@ public class enemy : MonoBehaviour
             {
                 // 從敵人指向玩家的方向
                 Vector2 pushDir = collision.transform.position - transform.position;
+                pushDir.y = 0f;
                 pushDir.Normalize();
 
                 // 施加水平彈開力
@@ -78,9 +79,20 @@ public class enemy : MonoBehaviour
     }
 
     public void TakeDamage(){
-        Debug.Log("Trigger damage");
-        health--;
+        int damage = Random.Range(10, 21); // 注意：上限是「不包含」，所以要填 21
 
+        // 5% 暴擊機率
+        if (Random.value <= 0.05f)
+        {
+            damage *= 2;
+            Debug.Log("暴擊！傷害為：" + damage);
+        }
+        else
+        {
+            Debug.Log("一般攻擊，傷害為：" + damage);
+        }
+
+        health -= damage;
         health = Mathf.Clamp(health, 0, maxHealth);
         UpdateHealthUI();
 
