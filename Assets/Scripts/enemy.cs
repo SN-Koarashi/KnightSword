@@ -9,10 +9,11 @@ public class enemy : MonoBehaviour
     public AudioClip hurtSound;
     public Transform target; // 玩家（或任何目標）
     public float maxHealth = 150f;
-    public float speed = 2f;
+    public float speed = 1f;
     public float pushForce = 15f;
 
     private float health;
+    private float initialSpeed;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private AudioSource audioSource;
@@ -20,6 +21,7 @@ public class enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        initialSpeed = speed;
         health = maxHealth;
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -49,6 +51,8 @@ public class enemy : MonoBehaviour
                 spriteRenderer.flipX = false; // 面向右
             }
         }
+
+        speed = initialSpeed * (1f + (1f - (health / maxHealth)));
     }
 
     
