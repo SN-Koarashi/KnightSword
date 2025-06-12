@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class enemy : MonoBehaviour
 {
+    public Slider healthSlider;
     public AudioClip hurtSound;
     public Transform target; // 玩家（或任何目標）
-    public int health = 5;
+    public float maxHealth = 5f;
     public float speed = 2f;
     public float pushForce = 15f;
 
+    private float health;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private AudioSource audioSource;
@@ -17,6 +20,7 @@ public class enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        health = maxHealth;
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
@@ -25,7 +29,7 @@ public class enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (target == null) return;
+        if (target == null || GameManager.Instance.isPaused) return;
 
         // 計算方向
         Vector3 direction = (target.position - transform.position).normalized;
@@ -77,12 +81,23 @@ public class enemy : MonoBehaviour
         Debug.Log("Trigger damage");
         health--;
 
+        health = Mathf.Clamp(health, 0, maxHealth);
+        UpdateHealthUI();
+
         animator.SetBool("isHurt", true);
         if(hurtSound != null){
             audioSource.PlayOneShot(hurtSound);
         }
 
         StartCoroutine(ResumeHurt());
+    }
+
+    private void UpdateHealthUI()
+    {
+        if (healthSlider != null)
+        {
+            healthSlider.value = health / maxHealth;
+        }
     }
 
     private IEnumerator ResumeHurt()
@@ -116,6 +131,9 @@ public class enemy : MonoBehaviour
 
         sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
 
+        if(healthSlider != null){
+            healthSlider.transform.parent.gameObject.SetActive(false);
+        }
         Destroy(gameObject); // 最後刪除物件
     }
 

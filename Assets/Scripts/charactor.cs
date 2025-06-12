@@ -61,6 +61,8 @@ public class charactor : MonoBehaviour
 
     void Update()
     {
+        if(GameManager.Instance.isPaused) return;
+
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
         moveInput.Normalize();
@@ -139,6 +141,8 @@ public class charactor : MonoBehaviour
             return; // 彈開期間不控制位置
         }
 
+        if(GameManager.Instance.isPaused) return;
+
         Vector2 nextPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
 
         if (foot != null)
@@ -166,12 +170,19 @@ public class charactor : MonoBehaviour
         rb.MovePosition(nextPos);
     }
 
+    public void TriggerDeath()
+    {
+        StartCoroutine(FadeOutDeath());
+    }
+
     public void TriggerAttack(){
         StartCoroutine(ActivateHitbox());
     }
 
     public void TriggerKnockback()
     {
+        if(GameManager.Instance.isPaused) return;
+
         isKnockedBack = true;
         knockbackTimer = knockbackDuration;
 
@@ -182,6 +193,8 @@ public class charactor : MonoBehaviour
     }
 
     public void PlayAttackSound(){
+        if(GameManager.Instance.isPaused) return;
+
         if(attackSound != null){
             if(needPlayingAttackSound == true){
                 audioSource.PlayOneShot(attackSound);
@@ -197,12 +210,16 @@ public class charactor : MonoBehaviour
 
     public void PauseGame()
     {
-        Time.timeScale = 0f;
+        // Time.timeScale = 0f;
+
+        GameManager.Instance.isPaused = true;
     }
 
     public void ResumeGame()
     {
-        Time.timeScale = 1f;
+        // Time.timeScale = 1f;
+
+        GameManager.Instance.isPaused = false;
     }
 
     private IEnumerator ActivateHitbox()
@@ -212,5 +229,28 @@ public class charactor : MonoBehaviour
         swordHitbox.SetActive(true); // 開啟碰撞區
         yield return new WaitForSeconds(hitboxDuration); // 等待 0.5 秒
         swordHitbox.SetActive(false); // 關閉碰撞區
+    }
+
+    private IEnumerator FadeOutDeath()
+    {
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr == null) yield break;
+
+        float fadeDuration = 1f; // 淡出秒數
+        float elapsed = 0f;
+
+        Color originalColor = sr.color;
+
+        while (elapsed < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
+            sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+
+        // Destroy(gameObject); // 最後刪除物件
     }
 }

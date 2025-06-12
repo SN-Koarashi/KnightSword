@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public bool isDragon = false;
+    public bool isPaused = false;
 
     private void Awake()
     {
