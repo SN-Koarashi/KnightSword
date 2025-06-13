@@ -59,6 +59,13 @@ public class charactor : MonoBehaviour
 
     void Update()
     {
+        if(GameManager.Instance.isPaused){
+            sprite.sortingOrder = 0;
+        }
+        else{
+            sprite.sortingOrder = 2;
+        }
+
         if(GameManager.Instance.isPaused) return;
 
         moveInput.x = Input.GetAxisRaw("Horizontal");
