@@ -979,6 +979,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 1932454445}
   hurtSound: {fileID: 8300000, guid: d138d3e7a49bc57468a97d65c796207e, type: 3}
+  blockSound: {fileID: 8300000, guid: 108f1ee7228101b46b93c8c666e53871, type: 3}
   target: {fileID: 64400709}
   maxHealth: 150
   speed: 2

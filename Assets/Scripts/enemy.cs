@@ -7,6 +7,7 @@ public class enemy : MonoBehaviour
 {
     public Slider healthSlider;
     public AudioClip hurtSound;
+    public AudioClip blockSound;
     public Transform target; // 玩家（或任何目標）
     public float maxHealth = 150f;
     public float speed = 1f;
@@ -83,31 +84,36 @@ public class enemy : MonoBehaviour
     }
 
     public void TakeDamage(){
-        if(!GameManager.Instance.canDamage) return;
+        if(GameManager.Instance.canDamage){
+            int damage = Random.Range(10, 21); // 注意：上限是「不包含」，所以要填 21
 
-        int damage = Random.Range(10, 21); // 注意：上限是「不包含」，所以要填 21
+            // 5% 暴擊機率
+            if (Random.value <= 0.05f)
+            {
+                damage *= 2;
+                Debug.Log("暴擊！傷害為：" + damage);
+            }
+            else
+            {
+                Debug.Log("一般攻擊，傷害為：" + damage);
+            }
 
-        // 5% 暴擊機率
-        if (Random.value <= 0.05f)
-        {
-            damage *= 2;
-            Debug.Log("暴擊！傷害為：" + damage);
+            health -= damage;
+            health = Mathf.Clamp(health, 0, maxHealth);
+            UpdateHealthUI();
+
+            animator.SetBool("isHurt", true);
+            if(hurtSound != null){
+                audioSource.PlayOneShot(hurtSound);
+            }
+
+            StartCoroutine(ResumeHurt());
         }
-        else
-        {
-            Debug.Log("一般攻擊，傷害為：" + damage);
+        else{
+            if(blockSound != null){
+                audioSource.PlayOneShot(blockSound);
+            }
         }
-
-        health -= damage;
-        health = Mathf.Clamp(health, 0, maxHealth);
-        UpdateHealthUI();
-
-        animator.SetBool("isHurt", true);
-        if(hurtSound != null){
-            audioSource.PlayOneShot(hurtSound);
-        }
-
-        StartCoroutine(ResumeHurt());
     }
 
     private void UpdateHealthUI()
