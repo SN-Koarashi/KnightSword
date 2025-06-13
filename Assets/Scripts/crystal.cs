@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class crystal : MonoBehaviour
 {
-    public Animator animator;
     public SpriteRenderer sr;
     private Coroutine fadeCoroutine;
     int count = 0;
@@ -13,7 +12,7 @@ public class crystal : MonoBehaviour
     {
         sr.color = new Color(1, 1, 1, 0);
 
-        if(GameManager.Instance.isDragon)
+        if(GameManager.Instance.canDamage)
         {
             ShowCrystal();
             count = 1;
@@ -45,9 +44,7 @@ public class crystal : MonoBehaviour
         if (fadeCoroutine == null)
             fadeCoroutine = StartCoroutine(FadeCycle());
 
-        animator.SetBool("isDragon", true);
-
-        GameManager.Instance.isDragon = true;
+        GameManager.Instance.canDamage = true;
     }
 
     void HideCrystal()
@@ -61,9 +58,7 @@ public class crystal : MonoBehaviour
         }
         sr.color = new Color(1, 1, 1, 0); // 透明度歸零
 
-        animator.SetBool("isDragon", false);
-
-        GameManager.Instance.isDragon = false;
+        GameManager.Instance.canDamage = false;
     }
 
     IEnumerator FadeCycle()

@@ -83,6 +83,8 @@ public class enemy : MonoBehaviour
     }
 
     public void TakeDamage(){
+        if(!GameManager.Instance.canDamage) return;
+
         int damage = Random.Range(10, 21); // 注意：上限是「不包含」，所以要填 21
 
         // 5% 暴擊機率
@@ -150,6 +152,10 @@ public class enemy : MonoBehaviour
         if(healthSlider != null){
             healthSlider.transform.parent.gameObject.SetActive(false);
         }
+
+
+        GameManager.Instance.isWin = true;
+        GameManager.Instance.SetPause(true);
         Destroy(gameObject); // 最後刪除物件
     }
 

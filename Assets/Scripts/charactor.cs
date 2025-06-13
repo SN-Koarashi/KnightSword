@@ -55,8 +55,6 @@ public class charactor : MonoBehaviour
         {
             Debug.LogWarning("請指定腳的 Transform！");
         }
-
-        animator.SetBool("isDragon", GameManager.Instance.isDragon);
     }
 
     void Update()
@@ -131,14 +129,19 @@ public class charactor : MonoBehaviour
 
                 if(health <= 0){
                     animator.SetBool("isDeath", true);
-
-                    PauseGame();
+                    GameManager.Instance.isDeath = true;
                 }
                 else{
                     animator.SetBool("isHurt", false);
                 }
             }
             return; // 彈開期間不控制位置
+        }
+
+        if(GameManager.Instance.isPaused){
+            moveInput.x = 0;
+            moveInput.y = 0;
+            moveInput.Normalize();
         }
 
         Vector2 nextPos = rb.position + moveInput * moveSpeed * Time.fixedDeltaTime;
@@ -170,6 +173,7 @@ public class charactor : MonoBehaviour
 
     public void TriggerDeath()
     {
+        GameManager.Instance.SetPause(true);
         StartCoroutine(FadeOutDeath());
     }
 
@@ -196,20 +200,6 @@ public class charactor : MonoBehaviour
         if(attackSound != null){
             audioSource.PlayOneShot(attackSound);
         }
-    }
-
-    public void PauseGame()
-    {
-        // Time.timeScale = 0f;
-
-        GameManager.Instance.isPaused = true;
-    }
-
-    public void ResumeGame()
-    {
-        // Time.timeScale = 1f;
-
-        GameManager.Instance.isPaused = false;
     }
 
     private IEnumerator ActivateHitbox()
