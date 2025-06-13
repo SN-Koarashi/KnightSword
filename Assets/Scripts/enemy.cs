@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class enemy : MonoBehaviour
 {
-    public Slider healthSlider;
+    public GameObject healthBar;
     public AudioClip hurtSound;
     public AudioClip blockSound;
     public Transform target; // 玩家（或任何目標）
@@ -27,6 +27,8 @@ public class enemy : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
+        UpdateHealthUI();
     }
 
     // Update is called once per frame
@@ -118,9 +120,13 @@ public class enemy : MonoBehaviour
 
     private void UpdateHealthUI()
     {
-        if (healthSlider != null)
+        if (healthBar != null)
         {
+            GameObject LockerIcon = healthBar.transform.Find("Locker").gameObject;
+            Slider healthSlider = healthBar.transform.Find("SliderBar").GetComponent<Slider>();
             healthSlider.value = health / maxHealth;
+
+            LockerIcon.SetActive(!GameManager.Instance.canDamage);
         }
     }
 
@@ -155,8 +161,8 @@ public class enemy : MonoBehaviour
 
         sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
 
-        if(healthSlider != null){
-            healthSlider.transform.parent.gameObject.SetActive(false);
+        if(healthBar != null){
+            healthBar.SetActive(false);
         }
 
 
