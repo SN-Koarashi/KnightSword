@@ -24,15 +24,21 @@ public class charactor : MonoBehaviour
     private Vector2 minBounds;
     private Vector2 maxBounds;
 
+    private float initialSpeed;
     private float knockbackTimer = 0f;
     private float stillTimer = 0f;
     private float idleDelay = 0.1f;
     private bool isKnockedBack = false;
     private bool isWalking = false;
+    private bool isAttack = false;
     private bool needPlayingAttackSound = false;
+
+    private float timer = 0f;
+    private float duration = 1f;
 
     void Start()
     {
+        initialSpeed = moveSpeed;
         audioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -115,12 +121,32 @@ public class charactor : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             animator.SetBool("isAttack", true);
+            isAttack = true;
             needPlayingAttackSound = true;
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
             animator.SetBool("isAttack", false);
+            isAttack = false;
             needPlayingAttackSound = false;
+        }
+
+        if(isAttack){
+            if(isWalking){
+                timer += Time.deltaTime;
+
+                float t = Mathf.Clamp01(timer / duration);
+                float speedMultiplier = Mathf.SmoothStep(0.85f, 0.15f, t);
+                moveSpeed = initialSpeed * speedMultiplier;
+            }
+            else{
+                timer = 0f;
+                moveSpeed = initialSpeed;
+            }
+        }
+        else{
+            timer = 0f;
+            moveSpeed = initialSpeed;
         }
     }
 
