@@ -388,7 +388,7 @@ MonoBehaviour:
   attackCollider: {fileID: 26858238}
   health: 3
   knockbackDuration: 0.3
-  hitboxDuration: 0.5
+  hitboxDuration: 0.1
   moveSpeed: 5
 --- !u!95 &64400713
 Animator:

@@ -31,7 +31,6 @@ public class charactor : MonoBehaviour
     private bool isKnockedBack = false;
     private bool isWalking = false;
     private bool isAttack = false;
-    private bool needPlayingAttackSound = false;
 
     private float timer = 0f;
     private float duration = 1f;
@@ -122,13 +121,11 @@ public class charactor : MonoBehaviour
         {
             animator.SetBool("isAttack", true);
             isAttack = true;
-            needPlayingAttackSound = true;
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
             animator.SetBool("isAttack", false);
             isAttack = false;
-            needPlayingAttackSound = false;
         }
 
         if(isAttack){
@@ -227,8 +224,8 @@ public class charactor : MonoBehaviour
         }
     }
 
-    public void PlayAttackSound(){
-        if(GameManager.Instance.isPaused || !needPlayingAttackSound) return;
+    private void PlayAttackSound(){
+        if(GameManager.Instance.isPaused) return;
 
         if(attackSound != null){
             audioSource.PlayOneShot(attackSound);
@@ -239,8 +236,9 @@ public class charactor : MonoBehaviour
     {
         if (swordHitbox == null) yield break;
 
+        PlayAttackSound();
         swordHitbox.SetActive(true); // 開啟碰撞區
-        yield return new WaitForSeconds(hitboxDuration); // 等待 0.5 秒
+        yield return new WaitForSeconds(hitboxDuration);
         swordHitbox.SetActive(false); // 關閉碰撞區
     }
 
