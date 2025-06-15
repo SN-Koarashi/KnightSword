@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class enemy : MonoBehaviour
 {
+    [SerializeField] GameObject damageTextPrefab; // 指向你做好的 prefab
+    // 假設你已經有指向 World Space Canvas 的 transform（例如在 Start() 指派或從 Inspector 拖入）
+    [SerializeField] private Transform canvasTransform;
+
     public GameObject healthBar;
     public AudioClip hurtSound;
     public AudioClip blockSound;
@@ -85,6 +89,18 @@ public class enemy : MonoBehaviour
         }
     }
 
+    public void ShowDamage(int amount, Vector3 worldPosition)
+    {
+        // 產生傷害文字物件
+        GameObject obj = Instantiate(damageTextPrefab, worldPosition, Quaternion.identity, canvasTransform);
+        Vector3 pos = obj.transform.position;
+        pos.z = 0f;
+        obj.transform.position = pos;
+        // 設定數值
+        obj.GetComponent<DamageText>().SetDamage(amount);
+        obj.GetComponent<DamageText>().SetActive(true);
+    }
+
     public void TakeDamage(){
         if(GameManager.Instance.canDamage){
             int damage = Random.Range(10, 21); // 注意：上限是「不包含」，所以要填 21
@@ -99,6 +115,8 @@ public class enemy : MonoBehaviour
             {
                 Debug.Log("一般攻擊，傷害為：" + damage);
             }
+
+            ShowDamage(damage, gameObject.transform.position + new Vector3(0, 1f, 0));
 
             health -= damage;
             health = Mathf.Clamp(health, 0, maxHealth);
